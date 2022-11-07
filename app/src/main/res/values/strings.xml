@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">wm_assignment</string>
+    <string name="country_item_name_region">%s, %s</string>
 </resources>
