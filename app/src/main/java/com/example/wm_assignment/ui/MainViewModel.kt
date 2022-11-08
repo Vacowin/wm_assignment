@@ -5,8 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wm_assignment.api.WalmartApiService
+import com.example.wm_assignment.api.asDomain
 import com.example.wm_assignment.domain.Country
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private val countries: MutableLiveData<List<Country>> by lazy { MutableLiveData() }
@@ -14,7 +18,10 @@ class MainViewModel : ViewModel() {
     fun loadCountries() {
         viewModelScope.launch {
             try {
-                load()
+                val countryList = withContext(Dispatchers.IO) {
+                    WalmartApiService.newInstance().getCountries().asDomain()
+                }
+                countries.value = countryList
             }
             catch (e: Exception) {
                 Log.d("MainViewModel", "get countries err " + e.message)
@@ -24,15 +31,5 @@ class MainViewModel : ViewModel() {
 
     fun getCountries(): LiveData<List<Country>> {
         return countries
-    }
-
-    //TODO: Load from mock data
-    private fun load() {
-        val list = ArrayList<Country>()
-        list.add(Country("Afghanistan","AS","AF","Kabul"))
-        list.add(Country("Åland Islands","EU","AX","Mariehamn"))
-        list.add(Country("Albania","EU","AL","Tirana"))
-
-        countries.value = list
     }
 }
