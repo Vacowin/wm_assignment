@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.wm_assignment.CountryFactory
 import com.example.wm_assignment.databinding.ActivityMainBinding
 
@@ -17,18 +18,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
-
         setUpUI()
+        observeViewModel()
     }
 
     private fun setUpUI() {
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
+
         val countryListAdapter = CountryListAdapter()
         binding.countryRecyclerview.adapter = countryListAdapter
+    }
 
-        viewModel.getCountries().observe(this) { countries ->
-            countryListAdapter.itemList = countries
+    private fun observeViewModel() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.getCountries().observe(this@MainActivity) { countries ->
+                (binding.countryRecyclerview.adapter as CountryListAdapter).itemList = countries
+            }
         }
     }
 }
