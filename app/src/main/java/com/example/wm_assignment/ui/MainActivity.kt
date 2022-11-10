@@ -23,11 +23,6 @@ class MainActivity : AppCompatActivity() {
         setUpUI()
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.loadCountries()
-    }
-
     private fun setUpUI() {
         val countryListAdapter = CountryListAdapter()
         binding.countryRecyclerview.adapter = countryListAdapter
